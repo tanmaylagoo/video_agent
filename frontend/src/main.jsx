@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import './style.css'
 
+const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '')
+
 const Icon = ({ name, size = 18 }) => {
   const paths = {
     play: <><path d="m8 5 11 7-11 7z" /></>,
@@ -34,7 +36,7 @@ function App() {
     body.append('language', language)
     if (file) body.append('media', file)
     try {
-      const response = await fetch('/api/analyze', { method: 'POST', body })
+      const response = await fetch(`${API_BASE_URL}/api/analyze`, { method: 'POST', body })
       const data = await response.json()
       if (!response.ok) throw new Error(data.detail || 'Analysis failed.')
       setResult(data)
@@ -48,7 +50,7 @@ function App() {
     if (!text || !result || busy) return
     setQuestion(''); setMessages((items) => [...items, { role: 'user', content: text }]); setBusy(true); setError('')
     try {
-      const response = await fetch(`/api/sessions/${result.session_id}/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question: text }) })
+      const response = await fetch(`${API_BASE_URL}/api/sessions/${result.session_id}/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question: text }) })
       const data = await response.json()
       if (!response.ok) throw new Error(data.detail || 'Could not answer that question.')
       setMessages((items) => [...items, { role: 'assistant', content: data.answer }])
