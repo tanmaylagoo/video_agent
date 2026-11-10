@@ -42,11 +42,8 @@ huggingface-hub>=0.24.0
 tiktoken>=0.8.0
 
 # -------------------------------
-# Streamlit UI
+# API service for VidWise
 # -------------------------------
-streamlit>=1.40.0
-streamlit-extras>=0.5.0
-watchdog>=4.0.1
 
 # -------------------------------
 # PDF Export
@@ -61,3 +58,8 @@ python-dotenv>=1.0.1
 numpy>=1.26.4
 requests>=2.32.3
 tqdm>=4.67.1
+
+# VidWise API
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+python-multipart>=0.0.9

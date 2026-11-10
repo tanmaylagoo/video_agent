@@ -68,7 +68,8 @@ RAG Chatbot
 | Framework | LangChain (LCEL) |
 | Vector Database | ChromaDB |
 | Embeddings | HuggingFace (all-MiniLM-L6-v2) |
-| UI (Optional) | Streamlit |
+| UI | React, Vite, Tailwind CSS |
+| API | FastAPI |
 
 ---
 
@@ -152,6 +153,27 @@ WHISPER_MODEL=small
 ---
 
 # Usage
+
+## Run VidWise
+
+Install the Python dependencies and start the API from the repository root:
+
+```bash
+pip install -r requirements.txt
+uvicorn backend.api:app --reload
+```
+
+In a second terminal, start the React frontend:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open the Vite URL shown in the terminal (usually `http://localhost:5173`). VidWise accepts a video URL or an uploaded audio/video file, then shows the transcript, summary, extracted action items and decisions, and transcript-grounded chat.
+
+You can also start the API with `python app.py` from the repository root.
 
 Run
 
