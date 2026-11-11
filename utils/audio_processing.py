@@ -1,6 +1,7 @@
 import yt_dlp
 from pydub import AudioSegment
 import os
+from urllib.parse import urlsplit
 DOWNLOAD_DIR = 'downloads'
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
@@ -45,10 +46,21 @@ def chunk_audio(wav_path: str, chunk_minutes: int=10)->list:
     return chunks
 
 
+def _normalize_url(source: str) -> str | None:
+    """Return a URL, adding https when a pasted link has no scheme."""
+    candidate = source.strip()
+    parsed = urlsplit(candidate if "://" in candidate else f"https://{candidate}")
+    host = (parsed.hostname or "").lower()
+    if parsed.scheme in {"http", "https"} and (host == "youtu.be" or host.endswith(".youtube.com") or host == "youtube.com"):
+        return candidate if "://" in candidate else f"https://{candidate}"
+    return None
+
+
 def process_input(source: str) -> list:
-    if source.startswith("http://") or source.startswith("https://"):
+    url = _normalize_url(source)
+    if url:
         print("Detected YouTube URL. Downloading audio...")
-        wav_path = download_youtube_audio(source)
+        wav_path = download_youtube_audio(url)
     else:
         print("Detected local file. Converting to WAV...")
         wav_path = convert_to_wav(source)
@@ -56,18 +68,6 @@ def process_input(source: str) -> list:
     print("Chunking audio...")
     chunks = chunk_audio(wav_path)
     print(f"Audio ready — {len(chunks)} chunk(s) created.")
-    return chunks
-
-def process_input(source: str)-> list:
-    if source.startswith("http://") or source.startswith("https://"):
-        print("Detected Youtube URL, downloading audio")
-        wav_path = download_youtube_audio(source)
-    else:
-        print("Detected local file. Converting to WAV")
-        wav_path=convert_to_wav(source)
-    print("Chunking audio...")
-    chunks = chunk_audio(wav_path)
-    print(f"Audio ready {len(chunks)} chunk(s) created")
     return chunks
 
 

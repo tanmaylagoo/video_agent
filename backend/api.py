@@ -16,16 +16,22 @@ load_dotenv()
 os.makedirs("downloads", exist_ok=True)
 
 app = FastAPI(title="VidWise API")
-allowed_origins = [
+# Keep local development and the deployed Vercel app usable when Render's
+# CORS_ORIGINS variable has not been configured. Add any preview/custom domains
+# through CORS_ORIGINS as a comma-separated list.
+allowed_origins = {
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://frontend-pi-drab-22.vercel.app",
+}
+allowed_origins.update(
     origin.strip()
-    for origin in os.getenv(
-        "CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"
-    ).split(",")
+    for origin in os.getenv("CORS_ORIGINS", "").split(",")
     if origin.strip()
-]
+)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=sorted(allowed_origins),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -91,6 +97,11 @@ async def analyze(
     except HTTPException:
         raise
     except Exception as exc:
+        if "rate limit exceeded" in str(exc).lower() or "status code 429" in str(exc).lower() or "response 429" in str(exc).lower():
+            raise HTTPException(
+                status_code=429,
+                detail="Mistral API rate limit exceeded. Wait briefly and retry, or check the API plan's rate limits and quota.",
+            ) from exc
         raise HTTPException(status_code=500, detail=str(exc)) from exc
     finally:
         if temp_path and os.path.exists(temp_path):

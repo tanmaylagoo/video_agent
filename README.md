@@ -175,7 +175,7 @@ Open the Vite URL shown in the terminal (usually `http://localhost:5173`). VidWi
 
 You can also start the API with `python app.py` from the repository root.
 
-For deployment, set `CORS_ORIGINS` on the API to your Vercel site URL (for example, `https://vidwise.vercel.app`). Set `VITE_API_URL` in Vercel to the Render API URL (for example, `https://vidwise-api.onrender.com`). The Python dependencies include Whisper and the LangChain packages used by the API.
+For deployment, set `CORS_ORIGINS` on the Render API to the exact Vercel origin, with no path or trailing slash (for example, `https://frontend-pi-drab-22.vercel.app`). Multiple origins can be comma-separated. Set `VITE_API_URL` in Vercel to the Render API URL (for example, `https://vidwise-a2vo.onrender.com`). The Python dependencies include Whisper and the LangChain packages used by the API.
 
 Run
 
